@@ -1,0 +1,194 @@
+// src/prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  PLAYER
+  VENUE_ADMIN
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum MatchStatus {
+  OPEN
+  FULL
+  CANCELLED
+  COMPLETED
+}
+
+enum SportType {
+  FUTBOL
+  TENIS
+  PADEL
+  BASQUET
+  VOLEY
+  OTRO
+}
+
+enum CourtType {
+  INDOOR
+  OUTDOOR
+  SEMICUBIERTA
+}
+
+enum DayOfWeek {
+  LUNES
+  MARTES
+  MIERCOLES
+  JUEVES
+  VIERNES
+  SABADO
+  DOMINGO
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  phone     String?
+  role      UserRole @default(PLAYER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  venues            Venue[]
+  bookings          Booking[]
+  organizedMatches  OpenMatch[]      @relation("MatchOrganizer")
+  matchParticipations MatchParticipant[]
+
+  @@map("users")
+}
+
+model Venue {
+  id           String     @id @default(cuid())
+  name         String
+  description  String?
+  address      String
+  neighborhood String?
+  city         String
+  phone        String?
+  email        String?
+  imageUrl     String?
+  images       String[]
+  openTime     String
+  closeTime    String
+  days         DayOfWeek[]
+  isActive     Boolean    @default(true)
+  adminId      String
+  admin        User       @relation(fields: [adminId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  courts   Court[]
+  bookings Booking[]
+  matches  OpenMatch[]
+
+  @@map("venues")
+}
+
+model Court {
+  id           String    @id @default(cuid())
+  name         String
+  sport        SportType
+  type         CourtType
+  capacity     Int
+  pricePerHour Float
+  description  String?
+  imageUrl     String?
+  venueId      String
+  venue        Venue     @relation(fields: [venueId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  schedules CourtSchedule[]
+  bookings  Booking[]
+  matches   OpenMatch[]
+
+  @@map("courts")
+}
+
+model CourtSchedule {
+  id           String    @id @default(cuid())
+  courtId      String
+  court        Court     @relation(fields: [courtId], references: [id])
+  dayOfWeek    DayOfWeek
+  openTime     String
+  closeTime    String
+  slotDuration Int       // minutos
+  isActive     Boolean   @default(true)
+
+  @@map("court_schedules")
+}
+
+model Booking {
+  id         String        @id @default(cuid())
+  userId     String
+  user       User          @relation(fields: [userId], references: [id])
+  courtId    String
+  court      Court         @relation(fields: [courtId], references: [id])
+  venueId    String
+  venue      Venue         @relation(fields: [venueId], references: [id])
+  date       DateTime      @db.Date
+  startTime  String
+  endTime    String
+  totalPrice Float
+  status     BookingStatus @default(PENDING)
+  notes      String?
+  createdAt  DateTime      @default(now())
+
+  match OpenMatch?
+
+  @@unique([courtId, date, startTime])
+  @@map("bookings")
+}
+
+model OpenMatch {
+  id               String      @id @default(cuid())
+  organizerId      String
+  organizer        User        @relation("MatchOrganizer", fields: [organizerId], references: [id])
+  bookingId        String      @unique
+  booking          Booking     @relation(fields: [bookingId], references: [id])
+  courtId          String
+  court            Court       @relation(fields: [courtId], references: [id])
+  venueId          String
+  venue            Venue       @relation(fields: [venueId], references: [id])
+  title            String
+  sport            SportType
+  format           String      // ej: "5v5", "3v3"
+  totalPlayers     Int
+  confirmedPlayers Int         @default(0)
+  description      String?
+  estimatedPrice   Float?
+  status           MatchStatus @default(OPEN)
+  date             DateTime    @db.Date
+  startTime        String
+  endTime          String
+  createdAt        DateTime    @default(now())
+
+  participants MatchParticipant[]
+
+  @@map("open_matches")
+}
+
+model MatchParticipant {
+  id       String    @id @default(cuid())
+  matchId  String
+  match    OpenMatch @relation(fields: [matchId], references: [id])
+  userId   String
+  user     User      @relation(fields: [userId], references: [id])
+  joinedAt DateTime  @default(now())
+
+  @@unique([matchId, userId])
+  @@map("match_participants")
+}
