@@ -25,3 +25,4 @@ describe('OvejaNegra Validaciones de Negocio', () => {
     expect(formatted).toContain('25')
   })
 })
+

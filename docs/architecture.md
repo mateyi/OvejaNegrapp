@@ -24,3 +24,4 @@ Desarrollar una aplicación web sencilla, moderna e intuitiva llamada **OvejaNeg
 3. El frontend consulta al backend los slots calculados y filtrados contra reservas existentes.
 4. El usuario elige un horario libre y confirma.
 5. El backend ejecuta una transacción en PostgreSQL que valida disponibilidad y guarda la reserva.
+

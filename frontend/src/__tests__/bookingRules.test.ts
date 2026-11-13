@@ -32,3 +32,4 @@ describe('OvejaNegra Reglas de Disponibilidad y Superposición', () => {
     expect(status).toBe('FULL')
   })
 })
+

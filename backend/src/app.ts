@@ -7,24 +7,32 @@ export const app = express()
 
 // Middlewares globales
 app.use(helmet())
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? process.env.FRONTEND_URL
-    : 'http://localhost:5173',
-  credentials: true,
-}))
+app.use(
+  cors({
+    origin: '*',
+    credentials: true,
+  })
+)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// Rutas
-app.use('/api', router)
-
-// Health check
+// Health checks (tanto en /health como en /api/health y en la raíz /)
 app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() })
+  res.json({ status: 'ok', service: 'OvejaNegra API', timestamp: new Date().toISOString() })
 })
+
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', service: 'OvejaNegra API', timestamp: new Date().toISOString() })
+})
+
+app.get('/', (_req, res) => {
+  res.json({ message: 'Bienvenido a OvejaNegra API 🐑⚽', docs: '/api/venues, /api/matches' })
+})
+
+// Rutas principales bajo /api
+app.use('/api', router)
 
 // 404 handler
 app.use((_req, res) => {
-  res.status(404).json({ message: 'Ruta no encontrada' })
+  res.status(404).json({ error: 'Ruta no encontrada', status: 404 })
 })

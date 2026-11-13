@@ -144,3 +144,4 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ error: 'Error al actualizar perfil.' })
   }
 }
+

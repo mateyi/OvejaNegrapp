@@ -62,3 +62,4 @@ export const getAdminStats = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ error: 'Error al consultar panel administrativo.' })
   }
 }
+

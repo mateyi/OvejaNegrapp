@@ -130,3 +130,4 @@ npx vitest run
 - **Frontend (Vercel):** Se puede conectar el repositorio de GitHub apuntando el root directory a `/frontend`. Configurar variable de entorno `VITE_API_URL` apuntando a la URL del backend en producción.
 - **Backend (Railway):** Desplegar el directorio `/backend`. Agregar PostgreSQL desde el marketplace de Railway y vincular la variable `DATABASE_URL`.
 - **Base de Datos:** PostgreSQL administrado por Railway o Supabase.
+

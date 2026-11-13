@@ -476,3 +476,4 @@ export const VenueDetailPage: React.FC = () => {
     </div>
   )
 }
+
