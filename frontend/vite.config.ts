@@ -9,6 +9,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(import.meta.dirname, './src'),
     },
+    // Evita copias duplicadas de React (causa "Invalid hook call" / pantalla en blanco)
+    dedupe: ['react', 'react-dom'],
   },
   server: {
     port: 5173,

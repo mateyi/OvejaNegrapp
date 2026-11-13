@@ -58,3 +58,4 @@ Hacé clic en **Deploy**. Vercel compilará la aplicación y te otorgará un dom
    - **Usuario:** `jugador@ovejanegra.com`
    - **Contraseña:** `OvejaNegra2026!`
 4. Realizá una reserva de prueba en cualquiera de las canchas disponibles y sumate a un partido abierto.
+
